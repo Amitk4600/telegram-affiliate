@@ -30,16 +30,13 @@ jobs:
           CHAT_ID: ${{ secrets.CHAT_ID }}
           AFFILIATE_TAG: ${{ secrets.AFFILIATE_TAG }}
         run: |
-          if [ -z "$TELEGRAM_TOKEN" ]; then
-            echo "❌ TELEGRAM_TOKEN is not set"
+         if [ -z "$TELEGRAM_TOKEN" ]; then echo "❌ TELEGRAM_TOKEN is not set"; else echo "✅ TELEGRAM_TOKEN is set";
             
           fi
-          if [ -z "$CHAT_ID" ]; then
-            echo "❌ CHAT_ID is not set"
+           if [ -z "$CHAT_ID" ]; then echo "❌ CHAT_ID is not set"; else echo "✅ CHAT_ID is set";
             
           fi
-          if [ -z "$AFFILIATE_TAG" ]; then
-            echo "❌ AFFILIATE_TAG is not set"
+         if [ -z "$AFFILIATE_TAG" ]; then echo "❌ AFFILIATE_TAG is not set"; else echo "✅ AFFILIATE_TAG is set";
             exit 1
           fi
           echo "✅ All secrets are configured"
