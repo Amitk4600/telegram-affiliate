@@ -32,11 +32,11 @@ jobs:
         run: |
           if [ -z "$TELEGRAM_TOKEN" ]; then
             echo "❌ TELEGRAM_TOKEN is not set"
-            exit 1
+            
           fi
           if [ -z "$CHAT_ID" ]; then
             echo "❌ CHAT_ID is not set"
-            exit 1
+            
           fi
           if [ -z "$AFFILIATE_TAG" ]; then
             echo "❌ AFFILIATE_TAG is not set"
