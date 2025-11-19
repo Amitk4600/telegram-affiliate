@@ -5,11 +5,9 @@ from datetime import datetime
 import os
 import random
 
-TELEGRAM_TOKEN = os.getenv(
-    "TELEGRAM_TOKEN", "8390539844:AAHI9syLNNDQw4bSqyYHxJtnM4JDOqJWa2s"
-)
-CHAT_ID = os.getenv("CHAT_ID", "@crystabloom")
-AFFILIATE_TAG = os.getenv("AFFILIATE_TAG", "crystabloom-21")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+AFFILIATE_TAG = os.getenv("AFFILIATE_TAG")
 
 CATEGORIES = [
     # --- Vitamins, Minerals & Supplements ---
