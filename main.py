@@ -321,7 +321,40 @@ CATEGORIES = [
     "yoga for sexual health",
     "meditation guides for libido",
     "cookbooks (keto, low-calorie)",
+    # --- NEW ITEMS ADDED ---
+    "spirulina supplements",
+    "chlorella supplements",
+    "astaxanthin capsules",
+    "resveratrol supplements",
+    "l-theanine capsules",
+    "rhodiola rosea capsules",
+    "ginkgo biloba capsules",
+    "msm joint support",
+    "boswellia serrata capsules",
+    "brain health supplements",
+    "eye health supplements",
+    "adaptogen blends",
+    "face masks",
+    "lip balm",
+    "body scrubs",
+    "essential oils",
+    "makeup removers",
+    "hair styling products",
+    "dry shampoo",
+    "anti-aging creams",
+    "adjustable dumbbells",
+    "exercise sliders",
+    "jump ropes",
+    "smart water bottles",
+    "recovery boots",
+    "pain relief gels (cooling/warming)",
+    "back & neck massagers",
+    "libido enhancers (herbal)",
+    "male masturbators (wellness-safe)",
+    "g-spot stimulators (wellness-focused)",
+    "travel intimacy products",
 ]
+
 
 # SCRAPED_FILE = "products.txt"
 # scraped_ids = set()
@@ -680,9 +713,8 @@ def send_to_telegram(text, image_url=None):
         payload = {"chat_id": CHAT_ID, "caption": text, "parse_mode": "HTML"}
         files = {"photo": requests.get(image_url).content} if image_url else None
         requests.post(url, data=payload, files=files)
-        print("[+] Posted to Telegram")
-    except Exception as e:
-        print("Telegram Error:", e)
+    except:
+        pass
 
 
 def save_product(data):
@@ -691,11 +723,10 @@ def save_product(data):
 
 
 async def scrape_amazon_item(page):
-
-    async def safe(selector_list):
-        for selector in selector_list:
+    async def safe(selectors):
+        for sel in selectors:
             try:
-                txt = await page.inner_text(selector)
+                txt = await page.inner_text(sel)
                 if txt.strip():
                     return txt.strip()
             except:
@@ -738,83 +769,59 @@ async def scrape_amazon_item(page):
                 break
         except:
             pass
-
     return title, price, rating, desc, img
 
 
 async def main():
-    print("[+] Starting Amazon Scraper on Railway…")
-
     async with async_playwright() as p:
         browser = await p.firefox.launch(headless=True)
         page = await browser.new_page()
-
         start_time = datetime.now()
-        end_time = start_time + timedelta(hours=1)  # run for 1 hour
+        end_time = start_time + timedelta(hours=1)
 
         while datetime.now() < end_time:
             random.shuffle(CATEGORIES)
-
             for q in CATEGORIES:
                 if datetime.now() >= end_time:
                     break
-
-                print(f"\n[+] Category: {q}")
-
                 page_num = 1
                 while True:
                     if datetime.now() >= end_time:
                         break
-
                     search_url = f"https://www.amazon.in/s?k={q}&page={page_num}"
                     await page.goto(search_url, timeout=60000)
                     await page.evaluate(
                         "window.scrollBy(0, document.body.scrollHeight)"
                     )
                     await asyncio.sleep(2)
-
                     links = await page.query_selector_all(
                         "a.a-link-normal.s-no-outline"
                     )
-                    urls = []
-
-                    for l in links:
-                        href = await l.get_attribute("href")
-                        if href and "/dp/" in href:
-                            dp = href.split("/dp/")[1].split("/")[0]
-                            urls.append(f"https://www.amazon.in/dp/{dp}")
-
+                    urls = [
+                        f"https://www.amazon.in{await l.get_attribute('href')}"
+                        for l in links
+                        if "/dp/" in await l.get_attribute("href")
+                    ]
                     new_products = [
                         u for u in urls if u.split("/dp/")[1] not in scraped_ids
                     ]
                     if not new_products:
                         break
-
                     random.shuffle(new_products)
-
                     for u in new_products:
                         if datetime.now() >= end_time:
                             break
-
                         product_id = u.split("/dp/")[1]
-                        print("Scraping:", u)
-
                         await page.goto(u, timeout=60000)
                         title, price, rating, desc, img = await scrape_amazon_item(page)
-
                         long_aff = (
                             f"https://www.amazon.in/dp/{product_id}?tag={AFFILIATE_TAG}"
                         )
                         short = shorten_link(long_aff)
-
                         text = (
-                            f"<b>{title}</b>\n\n"
-                            f"<b>💰 Price:</b> {price}\n"
-                            f"<b>⭐ Rating:</b> {rating}\n\n"
-                            f"{desc[:600]}...\n\n"
-                            f"<b>🔗 Buy Now:</b> {short}"
+                            f"<b>{title}</b>\n\n<b>💰 Price:</b> {price}\n"
+                            f"<b>⭐ Rating:</b> {rating}\n\n{desc[:600]}...\n\n<b>🔗 Buy Now:</b> {short}"
                         )
-
                         send_to_telegram(text, img)
                         save_product(
                             {
@@ -825,16 +832,10 @@ async def main():
                                 "time": str(datetime.now()),
                             }
                         )
-
                         scraped_ids.add(product_id)
                         await asyncio.sleep(8)
-
                     page_num += 1
-
-            print("\n[+] Sleeping 5 minutes…")
             await asyncio.sleep(300)
-
-    print("[+] Scraper finished 1 hour run.")
 
 
 asyncio.run(main())

@@ -32,33 +32,6 @@ jobs:
           pip install -r requirements.txt
           playwright install firefox
           playwright install-deps
-
-      # Step 4: Verify secrets
-      - name: Verify secrets
-        run: |
-          if [ -z "$TELEGRAM_TOKEN" ]; then
-            echo "❌ TELEGRAM_TOKEN is not set"
-            exit 1
-          else
-            echo "✅ TELEGRAM_TOKEN is set"
-          fi
-
-          if [ -z "$CHAT_ID" ]; then
-            echo "❌ CHAT_ID is not set"
-            exit 1
-          else
-            echo "✅ CHAT_ID is set"
-          fi
-
-          if [ -z "$AFFILIATE_TAG" ]; then
-            echo "❌ AFFILIATE_TAG is not set"
-            exit 1
-          else
-            echo "✅ AFFILIATE_TAG is set"
-          fi
-
-          echo "✅ All secrets are configured"
-
       # Step 5: Run the scraper script
       - name: Run Scraper
         run: python main.py
