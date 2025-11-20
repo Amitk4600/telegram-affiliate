@@ -6,12 +6,13 @@ import os
 import random
 
 # Check if current time is within execution window (6 AM - 7 AM UTC)
-current_hour = datetime.now(timezone.utc).hour
-if current_hour != 6:
-    print(
-        f"⏭️ Script execution skipped. Current hour is {current_hour} UTC. Only runs at 6 AM UTC."
-    )
-    exit(0)
+# current_hour = datetime.now(timezone.utc).hour
+# print(f"Current UTC hour: {current_hour}")
+# if current_hour != 6:
+#     print(
+#         f"⏭️ Script execution skipped. Current hour is {current_hour} UTC. Only runs at 6 AM UTC."
+#     )
+    # exit(0)
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
