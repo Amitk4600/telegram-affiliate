@@ -795,14 +795,16 @@ async def main():
                         "window.scrollBy(0, document.body.scrollHeight)"
                     )
                     await asyncio.sleep(2)
-                    links = await page.query_selector_all(
-                        "a.a-link-normal.s-no-outline"
-                    )
-                    urls = [
-                        f"https://www.amazon.in{await l.get_attribute('href')}"
-                        for l in links
-                        if "/dp/" in await l.get_attribute("href")
-                    ]
+                links = await page.query_selector_all(
+                    "a.a-link-normal.s-no-outline"
+                )
+                urls = []
+
+                for l in links:
+                    href = await l.get_attribute("href")
+                    if href and "/dp/" in href:
+                        dp = href.split("/dp/")[1].split("/")[0]
+                        urls.append(f"https://www.amazon.in/dp/{dp}")
                     new_products = [
                         u for u in urls if u.split("/dp/")[1] not in scraped_ids
                     ]
