@@ -11,7 +11,7 @@ current_hour = datetime.now(timezone.utc).hour
 if current_hour != 9:
     
     pass
-    exit(0)
+    # exit(0)
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
